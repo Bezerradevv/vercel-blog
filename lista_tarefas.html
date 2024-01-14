@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: max-content;
+        }
+
+        #task-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #task-form label,
+        #task-form input,
+        #task-form textarea,
+        #task-form button,
+        #task-form select {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #task-list {
+            list-style-type: none;
+            padding: 0;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        #task-list li {
+            cursor: pointer;
+            margin-bottom: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        #task-list li.completed {
+            background-color: #c8e6c9; /* Cor verde para tarefas concluídas */
+        }
+
+        #task-list li:hover {
+            background-color: #f0f0f0;
+        }
+
+        #task-list li label {
+            margin-right: 8px;
+        }
+
+        #task-list li span {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #task-list li p {
+            margin: 10px 0;
+        }
+
+        #task-list li a {
+            text-decoration: none;
+            color: #3498db;
+            margin-left: auto;
+        }
+
+        #task-list li a:hover {
+            text-decoration: underline;
+        }
+
+        #file-input {
+            margin-top: 8px;
+        }
+
+        #completion-form {
+            background-color: #b4cfe0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            height: max-content;
+        }
+
+        .anexo {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        #completion-form button {
+            background-color: whitesmoke;
+            color: black;
+            border-radius: 10px;
+        }
+
+        button {
+            width: max-content;
+            height: 40px;
+            cursor: pointer;
+            background-color: #005b97;
+            color: #fff;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <form id="task-form">
+        <label for="task">Nome da Tarefa:</label>
+        <input type="text" id="task" required>
+
+        <label for="deadline">Data Limite:</label>
+        <input type="date" id="deadline" required>
+
+        <label for="description">Descrição da Tarefa:</label>
+        <textarea id="description" rows="3" required></textarea>
+
+        <label for="file-input">Download (PDF ou Imagem):</label>
+        <input type="file" id="file-input" accept=".pdf, .jpg, .jpeg, .png" required>
+
+        <button type="submit" onclick="addTask()">Adicionar Tarefa</button>
+    </form>
+
+    <ul id="task-list"></ul>
+
+    <div id="completion-form">
+        <h3>Finalizar Tarefa</h3>
+
+        <div>
+            <label for="completion-message">Mensagem de Realização:</label>
+            <textarea id="completion-message" rows="3" required></textarea>
+        </div>
+
+        <div class="anexo">
+            <label for="completion-file-input">Anexar Arquivos:</label>
+            <input type="file" id="completion-file-input" accept=".pdf, .jpg, .jpeg, .png" required>
+        </div>
+
+        <button type="submit" onclick="completeTask()">Finalizar Tarefa</button>
+    </div>
+</div>
+
+<script>
+    function addTask() {
+        const taskInput = document.getElementById('task');
+        const deadlineInput = document.getElementById('deadline');
+        const descriptionInput = document.getElementById('description');
+        const fileInput = document.getElementById('file-input');
+        const taskList = document.getElementById('task-list');
+
+        if (taskInput.value.trim() !== '') {
+            const newTask = document.createElement('li');
+            const taskDetails = document.createElement('div');
+            const taskCheckbox = document.createElement('input');
+
+            taskCheckbox.type = 'checkbox';
+            taskCheckbox.disabled = true;
+
+            taskDetails.innerHTML = `
+                    <label>${taskInput.value}</label>
+                    <span>Data Limite: ${deadlineInput.value}</span>
+                    <p>Descrição: ${descriptionInput.value}</p>
+                    <a href="#" onclick="showCompletionForm()">Finalizar</a>
+                `;
+
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                const fileLink = document.createElement('a');
+                fileLink.href = URL.createObjectURL(fileInput.files[0]);
+                fileLink.target = '_blank';
+                fileLink.textContent = `Download: ${fileName}`;
+                taskDetails.appendChild(fileLink);
+            }
+
+            newTask.appendChild(taskCheckbox);
+            newTask.appendChild(taskDetails);
+
+            newTask.addEventListener('click', () => {
+                newTask.style.textDecoration = 'line-through';
+                taskCheckbox.checked = !taskCheckbox.checked;
+                newTask.classList.toggle('completed', taskCheckbox.checked);
+            });
+
+            taskList.appendChild(newTask);
+
+            taskInput.value = '';
+            deadlineInput.value = '';
+            descriptionInput.value = '';
+            fileInput.value = '';
+        }
+    }
+
+    function showCompletionForm() {
+        const completionForm = document.getElementById('completion-form');
+        completionForm.style.display = 'block';
+    }
+
+    function completeTask() {
+        const completionForm = document.getElementById('completion-form');
+        const completionMessageInput = document.getElementById('completion-message');
+        const completionFileInput = document.getElementById('completion-file-input');
+
+        // Finalização da tarefa, enviar mensagens, salvar arquivos, etc.
+
+        // Limpa o formulário de finalização
+        completionMessageInput.value = '';
+        completionFileInput.value = '';
+
+        // Esconde o formulário de finalização
+        completionForm.style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
