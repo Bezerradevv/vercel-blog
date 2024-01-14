@@ -12,15 +12,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: max-content;
+            height: 100vh;
         }
 
         #task-form {
             background-color: #fff;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         #task-form label,
@@ -30,13 +32,16 @@
         #task-form select {
             display: block;
             margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
         }
 
         #task-list {
             list-style-type: none;
             padding: 0;
             background-color: #fff;
-            border-radius: 20px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
@@ -49,10 +54,6 @@
             transition: background-color 0.3s;
             display: flex;
             align-items: center;
-        }
-
-        #task-list li.completed {
-            background-color: #c8e6c9; /* Cor verde para tarefas concluídas */
         }
 
         #task-list li:hover {
@@ -87,33 +88,38 @@
         }
 
         #completion-form {
-            background-color: #b4cfe0;
+            display: none;
+            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            height: max-content;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        .anexo {
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
-
-        #completion-form button {
-            background-color: whitesmoke;
-            color: black;
-            border-radius: 10px;
-        }
-
-        button {
-            width: max-content;
-            height: 40px;
-            cursor: pointer;
-            background-color: #005b97;
+        .button {
+            background-color: #3498db;
             color: #fff;
             border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
         }
+
+        .button:hover {
+            background-color: #217dbb;
+        }
+
+        #task-form .button,
+        #completion-form .button {
+            width: auto;
+            margin-top: 10px;
+        }
+
+        #task-list .button {
+            margin-left: auto;
+        }
+
     </style>
 </head>
 <body>
@@ -124,33 +130,33 @@
         <input type="text" id="task" required>
 
         <label for="deadline">Data Limite:</label>
-        <input type="date" id="deadline" required>
+        <input type="date" id="deadline">
 
         <label for="description">Descrição da Tarefa:</label>
-        <textarea id="description" rows="3" required></textarea>
+        <textarea id="description" rows="3"></textarea>
 
         <label for="file-input">Download (PDF ou Imagem):</label>
-        <input type="file" id="file-input" accept=".pdf, .jpg, .jpeg, .png" required>
+        <input type="file" id="file-input" accept=".pdf, .jpg, .jpeg, .png">
 
-        <button type="submit" onclick="addTask()">Adicionar Tarefa</button>
+
+        <button type="button" class="button" onclick="addTask()">Adicionar Tarefa</button>
     </form>
 
     <ul id="task-list"></ul>
 
     <div id="completion-form">
         <h3>Finalizar Tarefa</h3>
-
         <div>
             <label for="completion-message">Mensagem de Realização:</label>
-            <textarea id="completion-message" rows="3" required></textarea>
-        </div>
+        <textarea id="completion-message" rows="3"></textarea>
 
-        <div class="anexo">
+        </div>
+        <div>
             <label for="completion-file-input">Anexar Arquivos:</label>
-            <input type="file" id="completion-file-input" accept=".pdf, .jpg, .jpeg, .png" required>
-        </div>
+        <input type="file" id="completion-file-input" accept=".pdf, .jpg, .jpeg, .png">
 
-        <button type="submit" onclick="completeTask()">Finalizar Tarefa</button>
+        </div>
+        <button type="button" class="button" onclick="completeTask()">Finalizar Tarefa</button>
     </div>
 </div>
 
@@ -160,6 +166,7 @@
         const deadlineInput = document.getElementById('deadline');
         const descriptionInput = document.getElementById('description');
         const fileInput = document.getElementById('file-input');
+        const statusInput = document.getElementById('status');
         const taskList = document.getElementById('task-list');
 
         if (taskInput.value.trim() !== '') {
@@ -192,7 +199,6 @@
             newTask.addEventListener('click', () => {
                 newTask.style.textDecoration = 'line-through';
                 taskCheckbox.checked = !taskCheckbox.checked;
-                newTask.classList.toggle('completed', taskCheckbox.checked);
             });
 
             taskList.appendChild(newTask);
@@ -201,6 +207,7 @@
             deadlineInput.value = '';
             descriptionInput.value = '';
             fileInput.value = '';
+            statusInput.checked = false;
         }
     }
 
